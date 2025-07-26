@@ -1,14 +1,4 @@
 [
-  {
-    "username": "officer1",
-    "password": "secure123"
-  },
-  {
-    "username": "chief",
-    "password": "lapd2024"
-  },
-  {
-    "username": "Max Mustermann",
-    "password": "maxjuliancool"
-  }
+  { "username": "Julian", "password": "20203030" },
+  { "username": "Tim Bauer", "password": "TimBauer20351" }
 ]
