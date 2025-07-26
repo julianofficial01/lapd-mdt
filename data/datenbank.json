@@ -1,6 +1,30 @@
 [
-  { "name": "Mark Rüger", "geburtsdatum": "20.03.2000" },
-  { "name": "Tobias Schmidt", "geburtsdatum": "15.05.1995" },
-  { "name": "Anna Müller", "geburtsdatum": "01.01.1985" },
-  { "name": "Sophie Becker", "geburtsdatum": "22.08.1990" }
+  {
+    "name": "Mark Rüger",
+    "vorname": "Mark",
+    "nachname": "Rüger",
+    "geburtsdatum": "20.03.2000",
+    "groesse": "182 cm"
+  },
+  {
+    "name": "Tobias Schmidt",
+    "vorname": "Tobias",
+    "nachname": "Schmidt",
+    "geburtsdatum": "15.05.1995",
+    "groesse": "178 cm"
+  },
+  {
+    "name": "Anna Müller",
+    "vorname": "Anna",
+    "nachname": "Müller",
+    "geburtsdatum": "01.01.1985",
+    "groesse": "165 cm"
+  },
+  {
+    "name": "Sophie Becker",
+    "vorname": "Sophie",
+    "nachname": "Becker",
+    "geburtsdatum": "22.08.1990",
+    "groesse": "170 cm"
+  }
 ]
