@@ -49,7 +49,6 @@ app.get("/api/einwohner", (req, res) => {
 });
 
 // Status Liste WebSocket Logik
-
 let statusList = [];
 
 io.on("connection", (socket) => {
