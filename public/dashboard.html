@@ -52,6 +52,7 @@
       type="text"
       placeholder="Name eingeben..."
       class="w-full p-3 rounded bg-gray-700 text-white mb-4"
+      autocomplete="off"
     />
     <ul id="einwohnerList" class="max-h-96 overflow-y-auto border border-gray-700 rounded bg-gray-800 p-4 space-y-2"></ul>
   </div>
@@ -91,7 +92,30 @@
       </form>
     </div>
   </div>
+
+  <!-- Einwohner Modal -->
+  <div id="einwohnerModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+    <div class="bg-gray-800 rounded-lg p-6 w-4/5 max-w-5xl h-[500px] flex flex-col">
+      <button id="closeEinwohnerModal" class="self-end mb-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold">Close</button>
+      
+      <div class="flex flex-wrap gap-4 flex-grow">
+        <!-- Obere 3 Rechtecke -->
+        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48 p-4 text-white">
+          <h3 class="font-bold mb-4">Personeninformationen</h3>
+          <p><strong>Vorname:</strong> <span id="vornameText">-</span></p>
+          <p><strong>Nachname:</strong> <span id="nachnameText">-</span></p>
+          <p><strong>Geburtsdatum:</strong> <span id="gebText">-</span></p>
+          <p><strong>Größe:</strong> <span id="groesseText">-</span></p>
+        </div>
+        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48"></div>
+        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48"></div>
+      </div>
+
+      <!-- Unteres langes Rechteck -->
+      <div class="bg-gray-700 rounded mt-4 h-32"></div>
+    </div>
+  </div>
+
 </body>
 </html>
-
 
