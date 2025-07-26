@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>LAPD MDT</title>
+  <meta charset="UTF-8" />
+  <title>LAPD MDT Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <script defer src="app.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
   <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-    <div class="flex justify-center mb-4">
-      <img src="logo.png" alt="LAPD Logo" class="h-16">
+    <div class="flex justify-center mb-6">
+      <img src="logo.png" alt="LAPD Logo" class="h-16" />
     </div>
     <h1 class="text-center text-2xl font-bold mb-6">LAPD Mobile Data Terminal</h1>
     <form id="loginForm" class="space-y-4">
-      <input type="text" id="username" placeholder="Benutzername" class="w-full p-2 rounded bg-gray-700">
-      <input type="password" id="password" placeholder="Passwort" class="w-full p-2 rounded bg-gray-700">
-      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded">Login</button>
+      <input type="text" id="username" placeholder="Benutzername" class="w-full p-2 rounded bg-gray-700" required />
+      <input type="password" id="password" placeholder="Passwort" class="w-full p-2 rounded bg-gray-700" required />
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded font-semibold">Login</button>
     </form>
     <p id="error" class="text-red-500 mt-4 hidden">Login fehlgeschlagen.</p>
   </div>
