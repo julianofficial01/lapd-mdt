@@ -3,22 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <title>LAPD MDT Dashboard</title>
-  <script defer src="app.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script defer src="/socket.io/socket.io.js"></script>
+  <script defer src="dashboard.js"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-6">
 
+  <!-- Logout -->
+  <div class="self-end mb-4">
+    <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">Logout</button>
+  </div>
+
   <!-- Navigation Buttons -->
-  <div class="flex justify-center space-x-4 bg-gray-800 p-4 rounded-md mb-6 w-full max-w-4xl">
-    <button id="btn-status" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">Statusübersicht</button>
-    <button id="btn-fahrzeug" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">Fahrzeugregister</button>
-    <button id="btn-akten" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">Akten</button>
+  <div class="flex justify-center space-x-4 bg-gray-800 p-4 rounded-md mb-6 w-full max-w-5xl">
+    <button id="btn-status" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 font-semibold">Statusübersicht</button>
+    <button id="btn-fahrzeug" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700 font-semibold">Fahrzeugregister</button>
+    <button id="btn-einwohner" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700 font-semibold">Einwohner Suche</button>
   </div>
 
   <!-- Seiten-Inhalte -->
-  <div id="page-status" class="w-full max-w-4xl block">
+  <div id="page-status" class="w-full max-w-5xl block">
     <h2 class="text-2xl font-bold mb-4">Statusübersicht</h2>
-    <!-- Hier deine Tabelle -->
+
     <table class="w-full text-center border border-gray-700 rounded-md">
       <thead class="bg-gray-800">
         <tr>
@@ -28,172 +34,64 @@
           <th class="border border-gray-700 px-4 py-2">Aktion</th>
         </tr>
       </thead>
-      <tbody id="status-table-body">
-        <!-- Daten dynamisch hier rein -->
-      </tbody>
+      <tbody id="statusTableBody"></tbody>
     </table>
-    <!-- Plus Button für neuen Eintrag -->
-    <button id="add-status" class="mt-4 bg-green-600 hover:bg-green-700 px-4 py-2 rounded">+ Eintrag hinzufügen</button>
 
-    <!-- Frame für Eintrag (versteckt, nur per JS sichtbar) -->
-    <div id="entry-frame" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden">
-      <div class="bg-gray-800 p-6 rounded-md w-full max-w-md">
-        <h3 class="text-xl font-bold mb-4" id="frame-title">Neuen Status Eintragen</h3>
-        <form id="entry-form" class="space-y-4">
-          <input type="text" id="name-input" placeholder="Name" class="w-full p-2 rounded bg-gray-700" required />
-          <select id="vehicle-input" class="w-full p-2 rounded bg-gray-700" required>
-            <option value="">Fahrzeug wählen</option>
-            <option value="Offroad">Offroad</option>
-            <option value="Straßenwagen">Straßenwagen</option>
-            <option value="Highspeed">Highspeed</option>
-          </select>
-          <select id="status-input" class="w-full p-2 rounded bg-gray-700" required>
-            <option value="">Status wählen</option>
-            <option value="10-8">10-8 (Im Dienst)</option>
-            <option value="10-7">10-7 (Außer Dienst)</option>
-            <option value="10-6">10-6 (Beschäftigt)</option>
-            <!-- Weitere Statusoptionen hier -->
-          </select>
-          <div class="flex justify-end space-x-4">
-            <button type="button" id="cancel-entry" class="px-4 py-2 bg-red-600 rounded hover:bg-red-700">Abbrechen</button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">Speichern</button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <button id="addEntryBtn" class="mt-4 bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold">+ Eintrag hinzufügen</button>
   </div>
 
-  <div id="page-fahrzeug" class="w-full max-w-4xl hidden">
+  <div id="page-fahrzeug" class="w-full max-w-5xl hidden">
     <h2 class="text-2xl font-bold mb-4">Fahrzeugregister</h2>
     <p>Hier kannst du Fahrzeugdaten verwalten. (Noch zu implementieren)</p>
   </div>
 
-  <div id="page-akten" class="w-full max-w-4xl hidden">
-    <h2 class="text-2xl font-bold mb-4">Akten</h2>
-    <p>Hier findest du die Aktenübersicht. (Noch zu implementieren)</p>
+  <div id="page-einwohner" class="w-full max-w-5xl hidden">
+    <h2 class="text-2xl font-bold mb-4">Einwohner Suche</h2>
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Name eingeben..."
+      class="w-full p-3 rounded bg-gray-700 text-white mb-4"
+    />
+    <ul id="einwohnerList" class="max-h-96 overflow-y-auto border border-gray-700 rounded bg-gray-800 p-4 space-y-2"></ul>
   </div>
 
-  <script>
-    // Tab-Umschalter
-    const btnStatus = document.getElementById('btn-status');
-    const btnFahrzeug = document.getElementById('btn-fahrzeug');
-    const btnAkten = document.getElementById('btn-akten');
-
-    const pageStatus = document.getElementById('page-status');
-    const pageFahrzeug = document.getElementById('page-fahrzeug');
-    const pageAkten = document.getElementById('page-akten');
-
-    function setActivePage(activeBtn, activePage) {
-      [btnStatus, btnFahrzeug, btnAkten].forEach(btn => {
-        btn.classList.remove('bg-blue-600');
-        btn.classList.add('bg-gray-600');
-      });
-      activeBtn.classList.remove('bg-gray-600');
-      activeBtn.classList.add('bg-blue-600');
-
-      [pageStatus, pageFahrzeug, pageAkten].forEach(page => page.classList.add('hidden'));
-      activePage.classList.remove('hidden');
-    }
-
-    btnStatus.addEventListener('click', () => setActivePage(btnStatus, pageStatus));
-    btnFahrzeug.addEventListener('click', () => setActivePage(btnFahrzeug, pageFahrzeug));
-    btnAkten.addEventListener('click', () => setActivePage(btnAkten, pageAkten));
-
-    // --- Status Eintrag Frame & Tabelle Logik ---
-    const addStatusBtn = document.getElementById('add-status');
-    const entryFrame = document.getElementById('entry-frame');
-    const cancelEntryBtn = document.getElementById('cancel-entry');
-    const entryForm = document.getElementById('entry-form');
-
-    const nameInput = document.getElementById('name-input');
-    const vehicleInput = document.getElementById('vehicle-input');
-    const statusInput = document.getElementById('status-input');
-
-    const statusTableBody = document.getElementById('status-table-body');
-
-    let currentEntry = null; // Zum Editieren
-
-    function openEntryFrame(edit = false, data = null) {
-      entryFrame.classList.remove('hidden');
-      if (edit && data) {
-        document.getElementById('frame-title').textContent = 'Status bearbeiten';
-        nameInput.value = data.name;
-        vehicleInput.value = data.vehicle;
-        statusInput.value = data.status;
-      } else {
-        document.getElementById('frame-title').textContent = 'Neuen Status Eintragen';
-        nameInput.value = '';
-        vehicleInput.value = '';
-        statusInput.value = '';
-      }
-    }
-
-    function closeEntryFrame() {
-      entryFrame.classList.add('hidden');
-      currentEntry = null;
-    }
-
-    addStatusBtn.addEventListener('click', () => {
-      openEntryFrame();
-    });
-
-    cancelEntryBtn.addEventListener('click', () => {
-      closeEntryFrame();
-    });
-
-    // Daten speichern und Tabelle updaten (Dummy lokal, du kannst das an dein Backend anpassen)
-    const entries = [];
-
-    function renderTable() {
-      statusTableBody.innerHTML = '';
-      entries.forEach((entry, index) => {
-        const tr = document.createElement('tr');
-        tr.classList.add('border', 'border-gray-700');
-        tr.innerHTML = `
-          <td class="border border-gray-700 px-4 py-2">${entry.name}</td>
-          <td class="border border-gray-700 px-4 py-2">${entry.vehicle}</td>
-          <td class="border border-gray-700 px-4 py-2">${entry.status}</td>
-          <td class="border border-gray-700 px-4 py-2 space-x-2">
-            <button class="edit-btn bg-yellow-500 hover:bg-yellow-600 text-black px-2 rounded">Edit</button>
-            <button class="delete-btn bg-red-600 hover:bg-red-700 px-2 rounded">Löschen</button>
-          </td>
-        `;
-        // Edit Button
-        tr.querySelector('.edit-btn').addEventListener('click', () => {
-          currentEntry = index;
-          openEntryFrame(true, entries[index]);
-        });
-        // Delete Button
-        tr.querySelector('.delete-btn').addEventListener('click', () => {
-          if (confirm(`Eintrag von ${entries[index].name} löschen?`)) {
-            entries.splice(index, 1);
-            renderTable();
-          }
-        });
-        statusTableBody.appendChild(tr);
-      });
-    }
-
-    entryForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const newEntry = {
-        name: nameInput.value.trim(),
-        vehicle: vehicleInput.value,
-        status: statusInput.value
-      };
-      if (currentEntry !== null) {
-        entries[currentEntry] = newEntry;
-      } else {
-        entries.push(newEntry);
-      }
-      renderTable();
-      closeEntryFrame();
-    });
-
-    // Starte mit leerer Tabelle
-    renderTable();
-  </script>
-
+  <!-- Modal für Status Eintrag -->
+  <div
+    id="modal"
+    class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden"
+  >
+    <div class="bg-gray-800 p-6 rounded-md w-full max-w-md">
+      <h3 id="modalTitle" class="text-xl font-bold mb-4">Neuen Status Eintragen</h3>
+      <form id="entryForm" class="space-y-4">
+        <input
+          id="inputName"
+          type="text"
+          placeholder="Name"
+          class="w-full p-2 rounded bg-gray-700 text-white"
+          required
+          readonly
+        />
+        <select id="inputVehicle" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <option value="">Fahrzeug wählen</option>
+          <option value="Offroad">Offroad</option>
+          <option value="Straßenwagen">Straßenwagen</option>
+          <option value="Highspeed">Highspeed</option>
+        </select>
+        <select id="inputStatus" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <option value="">Status wählen</option>
+          <option value="10-8">10-8 (Im Dienst)</option>
+          <option value="10-7">10-7 (Außer Dienst)</option>
+          <option value="10-6">10-6 (Beschäftigt)</option>
+        </select>
+        <div class="flex justify-end space-x-4">
+          <button type="button" id="cancelBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">Abbrechen</button>
+          <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
+
 
