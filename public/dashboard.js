@@ -61,11 +61,9 @@ btnEinwohner.addEventListener("click", () => {
 });
 
 // Status-Liste
-
 let statusList = [];
 
 addEntryBtn.addEventListener("click", () => {
-  // Nur einen Eintrag pro Benutzer erlauben
   if (statusList.find((e) => e.name === username)) {
     alert("Du kannst nur einen Eintrag haben. Bitte bearbeite oder lösche deinen bestehenden.");
     return;
@@ -166,9 +164,16 @@ tableBody.addEventListener("click", (e) => {
 });
 
 // Einwohner Suche
-
 const searchInput = document.getElementById("searchInput");
 const einwohnerList = document.getElementById("einwohnerList");
+
+const einwohnerModal = document.getElementById("einwohnerModal");
+const closeEinwohnerModal = document.getElementById("closeEinwohnerModal");
+
+const vornameText = document.getElementById("vornameText");
+const nachnameText = document.getElementById("nachnameText");
+const gebText = document.getElementById("gebText");
+const groesseText = document.getElementById("groesseText");
 
 let einwohnerData = [];
 
@@ -176,7 +181,7 @@ async function loadEinwohner() {
   try {
     const res = await fetch("/api/einwohner");
     einwohnerData = await res.json();
-    renderEinwohnerList(""); // Anfang: keine Einträge anzeigen
+    renderEinwohnerList("");
   } catch {
     einwohnerList.innerHTML = "<li>Fehler beim Laden der Daten</li>";
   }
@@ -186,12 +191,13 @@ function renderEinwohnerList(filter) {
   einwohnerList.innerHTML = "";
 
   if (filter.trim() === "") {
-    einwohnerList.innerHTML = "<li class='text-gray-500 italic'>Bitte Suche eingeben und Enter drücken...</li>";
+    einwohnerList.innerHTML = "<li class='text-gray-500 italic'>Bitte Suchbegriff eingeben...</li>";
     return;
   }
 
   const filtered = einwohnerData.filter((e) =>
-    e.name.toLowerCase().includes(filter.toLowerCase())
+    e.vorname.toLowerCase().startsWith(filter.toLowerCase()) ||
+    e.nachname.toLowerCase().startsWith(filter.toLowerCase())
   );
 
   if (filtered.length === 0) {
@@ -199,24 +205,29 @@ function renderEinwohnerList(filter) {
     return;
   }
 
-  filtered.forEach(({ name, geburtsdatum }) => {
+  filtered.forEach((person) => {
     const li = document.createElement("li");
-    li.textContent = `${name} (${geburtsdatum})`;
-    li.className = "border-b border-gray-700 py-2";
+    li.textContent = `${person.vorname} ${person.nachname}`;
+    li.className = "p-2 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded mb-2";
+    li.addEventListener("click", () => {
+      vornameText.textContent = person.vorname;
+      nachnameText.textContent = person.nachname;
+      gebText.textContent = person.geburtsdatum;
+      groesseText.textContent = person.groesse;
+      einwohnerModal.classList.remove("hidden");
+    });
     einwohnerList.appendChild(li);
   });
 }
 
-// Jetzt Listener nur auf Enter
-
-searchInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    renderEinwohnerList(searchInput.value);
-  }
+searchInput.addEventListener("input", () => {
+  renderEinwohnerList(searchInput.value);
 });
 
-// Seite initial laden
-loadEinwohner();
+closeEinwohnerModal.addEventListener("click", () => {
+  einwohnerModal.classList.add("hidden");
+});
 
+// Initial laden
+loadEinwohner();
 
