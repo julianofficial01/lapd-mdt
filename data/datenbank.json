@@ -4,39 +4,48 @@
     "vorname": "Mark",
     "nachname": "Rüger",
     "geburtsdatum": "20.03.2000",
-    "groesse": "1.82 m",
+    "groesse": "182 cm",
     "pkwFuehrerschein": "ja",
     "waffenschein": "nein",
-    "lkwFuehrerschein": "ja"
+    "lkwFuehrerschein": "ja",
+    "telefonnummer": "0176-12345678",
+    "email_verteiler": "mark.rueger@lapd.de"
   },
   {
     "name": "Tobias Schmidt",
     "vorname": "Tobias",
     "nachname": "Schmidt",
     "geburtsdatum": "15.05.1995",
-    "groesse": "1.78 m",
+    "groesse": "178 cm",
     "pkwFuehrerschein": "ja",
     "waffenschein": "ja",
-    "lkwFuehrerschein": "nein"
+    "lkwFuehrerschein": "nein",
+    "telefonnummer": "der_cooletyp33",
+    "email_verteiler": "dont_leak"
   },
   {
     "name": "Anna Müller",
     "vorname": "Anna",
     "nachname": "Müller",
     "geburtsdatum": "01.01.1985",
-    "groesse": "1.65 m",
+    "groesse": "165 cm",
     "pkwFuehrerschein": "nein",
     "waffenschein": "nein",
-    "lkwFuehrerschein": "nein"
+    "lkwFuehrerschein": "nein",
+    "telefonnummer": "0170-22334455",
+    "email_verteiler": "anna.mueller@lapd.de"
   },
   {
     "name": "Sophie Becker",
     "vorname": "Sophie",
     "nachname": "Becker",
     "geburtsdatum": "22.08.1990",
-    "groesse": "1.70 m",
+    "groesse": "170 cm",
     "pkwFuehrerschein": "ja",
     "waffenschein": "ja",
-    "lkwFuehrerschein": "ja"
+    "lkwFuehrerschein": "ja",
+    "telefonnummer": "0160-55667788",
+    "email_verteiler": "sophie.becker@lapd.de"
   }
 ]
+
