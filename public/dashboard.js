@@ -1,33 +1,29 @@
 const socket = io();
 
+// STATUS-ÜBERSICHT
 const tableBody = document.getElementById("statusTableBody");
 const modal = document.getElementById("modal");
 const entryForm = document.getElementById("entryForm");
 const addEntryBtn = document.getElementById("addEntryBtn");
 const cancelBtn = document.getElementById("cancelBtn");
-
 const inputName = document.getElementById("inputName");
 const inputStatus = document.getElementById("inputStatus");
 const inputVehicle = document.getElementById("inputVehicle");
 
 const username = sessionStorage.getItem("username");
-if (!username) {
-  window.location.href = "/";
-}
+if (!username) window.location.href = "/";
 
 let editMode = false;
 
-const logoutBtn = document.getElementById("logoutBtn");
-logoutBtn.addEventListener("click", () => {
+document.getElementById("logoutBtn").addEventListener("click", () => {
   sessionStorage.removeItem("username");
   window.location.href = "/";
 });
 
-// Navigation zwischen Seiten
+// Seiten-Navigation
 const btnStatus = document.getElementById("btn-status");
 const btnFahrzeug = document.getElementById("btn-fahrzeug");
 const btnEinwohner = document.getElementById("btn-einwohner");
-
 const pageStatus = document.getElementById("page-status");
 const pageFahrzeug = document.getElementById("page-fahrzeug");
 const pageEinwohner = document.getElementById("page-einwohner");
@@ -36,39 +32,35 @@ btnStatus.addEventListener("click", () => {
   pageStatus.classList.remove("hidden");
   pageFahrzeug.classList.add("hidden");
   pageEinwohner.classList.add("hidden");
-
-  btnStatus.classList.add("bg-blue-600");
-  btnFahrzeug.classList.remove("bg-blue-600");
-  btnEinwohner.classList.remove("bg-blue-600");
+  toggleActiveButton(btnStatus);
 });
 btnFahrzeug.addEventListener("click", () => {
   pageStatus.classList.add("hidden");
   pageFahrzeug.classList.remove("hidden");
   pageEinwohner.classList.add("hidden");
-
-  btnStatus.classList.remove("bg-blue-600");
-  btnFahrzeug.classList.add("bg-blue-600");
-  btnEinwohner.classList.remove("bg-blue-600");
+  toggleActiveButton(btnFahrzeug);
 });
 btnEinwohner.addEventListener("click", () => {
   pageStatus.classList.add("hidden");
   pageFahrzeug.classList.add("hidden");
   pageEinwohner.classList.remove("hidden");
-
-  btnStatus.classList.remove("bg-blue-600");
-  btnFahrzeug.classList.remove("bg-blue-600");
-  btnEinwohner.classList.add("bg-blue-600");
+  toggleActiveButton(btnEinwohner);
 });
 
-// Status-Liste
+function toggleActiveButton(activeBtn) {
+  [btnStatus, btnFahrzeug, btnEinwohner].forEach((btn) => {
+    btn.classList.remove("bg-blue-600");
+  });
+  activeBtn.classList.add("bg-blue-600");
+}
+
 let statusList = [];
 
 addEntryBtn.addEventListener("click", () => {
   if (statusList.find((e) => e.name === username)) {
-    alert("Du kannst nur einen Eintrag haben. Bitte bearbeite oder lösche deinen bestehenden.");
+    alert("Du hast bereits einen Eintrag.");
     return;
   }
-
   editMode = false;
   inputName.value = username;
   inputName.disabled = true;
@@ -84,19 +76,12 @@ cancelBtn.addEventListener("click", () => {
 
 entryForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
-  const name = inputName.value;
-  const status = inputStatus.value;
-  const vehicle = inputVehicle.value;
-
-  const entry = { name, status, vehicle };
-
-  if (editMode) {
-    socket.emit("editEntry", entry);
-  } else {
-    socket.emit("addEntry", entry);
-  }
-
+  const entry = {
+    name: inputName.value,
+    status: inputStatus.value,
+    vehicle: inputVehicle.value,
+  };
+  socket.emit(editMode ? "editEntry" : "addEntry", entry);
   modal.classList.add("hidden");
   entryForm.reset();
 });
@@ -108,27 +93,21 @@ socket.on("updateList", (entries) => {
 
 function renderStatusTable() {
   tableBody.innerHTML = "";
-
   statusList.forEach((entry) => {
-    const isMine = entry.name === username;
-
     const tr = document.createElement("tr");
     tr.className = "border-t border-gray-700";
-
     tr.innerHTML = `
       <td class="p-3">${entry.name}</td>
       <td class="p-3">${entry.vehicle}</td>
       <td class="p-3">${entry.status}</td>
       <td class="p-3 space-x-2">
         ${
-          isMine
+          entry.name === username
             ? `<button class="editBtn bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded">Edit</button>
                <button class="deleteBtn bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Löschen</button>`
             : ""
         }
-      </td>
-    `;
-
+      </td>`;
     tableBody.appendChild(tr);
   });
 }
@@ -136,37 +115,26 @@ function renderStatusTable() {
 tableBody.addEventListener("click", (e) => {
   const row = e.target.closest("tr");
   if (!row) return;
-
-  const name = row.children[0].textContent;
-  const vehicle = row.children[1].textContent;
-  const status = row.children[2].textContent;
-
+  const [nameCell, vehicleCell, statusCell] = row.children;
+  const name = nameCell.textContent;
   if (e.target.classList.contains("deleteBtn")) {
-    if (name !== username) {
-      alert("Du kannst nur deinen eigenen Eintrag löschen.");
-      return;
-    }
+    if (name !== username) return alert("Nur eigene Einträge löschen!");
     socket.emit("deleteEntry", name);
   }
-
   if (e.target.classList.contains("editBtn")) {
-    if (name !== username) {
-      alert("Du kannst nur deinen eigenen Eintrag bearbeiten.");
-      return;
-    }
+    if (name !== username) return alert("Nur eigene Einträge bearbeiten!");
     editMode = true;
     inputName.value = name;
     inputName.disabled = true;
-    inputStatus.value = status;
-    inputVehicle.value = vehicle;
+    inputVehicle.value = vehicleCell.textContent;
+    inputStatus.value = statusCell.textContent;
     modal.classList.remove("hidden");
   }
 });
 
-// Einwohner Suche
+// EINWOHNER
 const searchInput = document.getElementById("searchInput");
 const einwohnerList = document.getElementById("einwohnerList");
-
 const einwohnerModal = document.getElementById("einwohnerModal");
 const closeEinwohnerModal = document.getElementById("closeEinwohnerModal");
 
@@ -174,6 +142,10 @@ const vornameText = document.getElementById("vornameText");
 const nachnameText = document.getElementById("nachnameText");
 const gebText = document.getElementById("gebText");
 const groesseText = document.getElementById("groesseText");
+
+const pkwText = document.getElementById("pkwFuehrerschein");
+const waffenText = document.getElementById("waffenschein");
+const lkwText = document.getElementById("lkwFuehrerschein");
 
 let einwohnerData = [];
 
@@ -183,21 +155,19 @@ async function loadEinwohner() {
     einwohnerData = await res.json();
     renderEinwohnerList("");
   } catch {
-    einwohnerList.innerHTML = "<li>Fehler beim Laden der Daten</li>";
+    einwohnerList.innerHTML = "<li class='text-red-500'>Fehler beim Laden der Daten</li>";
   }
 }
 
 function renderEinwohnerList(filter) {
   einwohnerList.innerHTML = "";
-
   if (filter.trim() === "") {
     einwohnerList.innerHTML = "<li class='text-gray-500 italic'>Bitte Suchbegriff eingeben...</li>";
     return;
   }
 
-  const filtered = einwohnerData.filter((e) =>
-    e.vorname.toLowerCase().startsWith(filter.toLowerCase()) ||
-    e.nachname.toLowerCase().startsWith(filter.toLowerCase())
+  const filtered = einwohnerData.filter((p) =>
+    `${p.vorname} ${p.nachname}`.toLowerCase().includes(filter.toLowerCase())
   );
 
   if (filtered.length === 0) {
@@ -209,25 +179,43 @@ function renderEinwohnerList(filter) {
     const li = document.createElement("li");
     li.textContent = `${person.vorname} ${person.nachname}`;
     li.className = "p-2 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded mb-2";
-    li.addEventListener("click", () => {
-      vornameText.textContent = person.vorname;
-      nachnameText.textContent = person.nachname;
-      gebText.textContent = person.geburtsdatum;
-      groesseText.textContent = person.groesse;
-      einwohnerModal.classList.remove("hidden");
+    li.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/api/einwohner");
+        const latest = await res.json();
+        const found = latest.find(
+          (p) =>
+            p.vorname === person.vorname && p.nachname === person.nachname
+        );
+        if (found) showEinwohnerModal(found);
+      } catch {
+        alert("Fehler beim Neuladen der Einwohnerdaten.");
+      }
     });
     einwohnerList.appendChild(li);
   });
 }
 
-searchInput.addEventListener("input", () => {
-  renderEinwohnerList(searchInput.value);
-});
+function showEinwohnerModal(person) {
+  vornameText.textContent = person.vorname;
+  nachnameText.textContent = person.nachname;
+  gebText.textContent = person.geburtsdatum;
+  groesseText.textContent = person.groesse;
+
+  pkwText.style.display = person.pkwFuehrerschein === "ja" ? "block" : "none";
+  waffenText.style.display = person.waffenschein === "ja" ? "block" : "none";
+  lkwText.style.display = person.lkwFuehrerschein === "ja" ? "block" : "none";
+
+  einwohnerModal.classList.remove("hidden");
+}
 
 closeEinwohnerModal.addEventListener("click", () => {
   einwohnerModal.classList.add("hidden");
 });
 
+searchInput.addEventListener("input", () => {
+  renderEinwohnerList(searchInput.value);
+});
+
 // Initial laden
 loadEinwohner();
-
