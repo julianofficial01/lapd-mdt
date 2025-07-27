@@ -147,6 +147,9 @@ const pkwText = document.getElementById("pkwFuehrerschein");
 const waffenText = document.getElementById("waffenschein");
 const lkwText = document.getElementById("lkwFuehrerschein");
 
+const telefonText = document.getElementById("telefonText");
+const emailText = document.getElementById("emailText");
+
 let einwohnerData = [];
 
 async function loadEinwohner() {
@@ -205,6 +208,9 @@ function showEinwohnerModal(person) {
   pkwText.style.display = person.pkwFuehrerschein === "ja" ? "block" : "none";
   waffenText.style.display = person.waffenschein === "ja" ? "block" : "none";
   lkwText.style.display = person.lkwFuehrerschein === "ja" ? "block" : "none";
+
+  telefonText.textContent = person.telefonnummer || "-";
+  emailText.textContent = person.email || "-";
 
   einwohnerModal.classList.remove("hidden");
 }
