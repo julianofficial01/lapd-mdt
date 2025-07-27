@@ -99,7 +99,7 @@
       <button id="closeEinwohnerModal" class="self-end mb-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold">Close</button>
       
       <div class="flex flex-wrap gap-4 flex-grow">
-        <!-- Obere 3 Rechtecke -->
+        <!-- Obere 3 Rechtecke in der gewünschten Reihenfolge -->
         <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48 p-4 text-white">
           <h3 class="font-bold mb-4">Personeninformationen</h3>
           <p><strong>Vorname:</strong> <span id="vornameText">-</span></p>
@@ -107,8 +107,16 @@
           <p><strong>Geburtsdatum:</strong> <span id="gebText">-</span></p>
           <p><strong>Größe:</strong> <span id="groesseText">-</span></p>
         </div>
-        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48"></div>
-        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48"></div>
+        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48 p-4 text-white overflow-y-auto">
+          <h3 class="font-bold mb-4">Lizenzen</h3>
+          <p id="pkwFuehrerschein" class="hidden">PKW Führerschein</p>
+          <p id="waffenschein" class="hidden">Waffenschein</p>
+          <p id="lkwFuehrerschein" class="hidden">LKW Führerschein</p>
+        </div>
+        <div class="bg-gray-700 rounded flex-1 min-w-[30%] h-48 p-4 text-white">
+          <h3 class="font-bold mb-4">Personendaten</h3>
+          <!-- Personendaten hier -->
+        </div>
       </div>
 
       <!-- Unteres langes Rechteck -->
@@ -118,4 +126,3 @@
 
 </body>
 </html>
-
