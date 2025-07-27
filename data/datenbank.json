@@ -4,27 +4,39 @@
     "vorname": "Mark",
     "nachname": "Rüger",
     "geburtsdatum": "20.03.2000",
-    "groesse": "182 cm"
+    "groesse": "1.82 m",
+    "pkwFuehrerschein": "ja",
+    "waffenschein": "nein",
+    "lkwFuehrerschein": "ja"
   },
   {
     "name": "Tobias Schmidt",
     "vorname": "Tobias",
     "nachname": "Schmidt",
     "geburtsdatum": "15.05.1995",
-    "groesse": "178 cm"
+    "groesse": "1.78 m",
+    "pkwFuehrerschein": "ja",
+    "waffenschein": "ja",
+    "lkwFuehrerschein": "nein"
   },
   {
     "name": "Anna Müller",
     "vorname": "Anna",
     "nachname": "Müller",
     "geburtsdatum": "01.01.1985",
-    "groesse": "165 cm"
+    "groesse": "1.65 m",
+    "pkwFuehrerschein": "nein",
+    "waffenschein": "nein",
+    "lkwFuehrerschein": "nein"
   },
   {
     "name": "Sophie Becker",
     "vorname": "Sophie",
     "nachname": "Becker",
     "geburtsdatum": "22.08.1990",
-    "groesse": "170 cm"
+    "groesse": "1.70 m",
+    "pkwFuehrerschein": "ja",
+    "waffenschein": "ja",
+    "lkwFuehrerschein": "ja"
   }
 ]
